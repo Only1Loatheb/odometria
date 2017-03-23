@@ -3,12 +3,13 @@ from Map import Map
 from Controller import Controller
 from Odometry import Odometry
 from Timer import Timer
+from ev3dev import ev3
 RUNNING_STRAIGHT = 0
 TAKING_TURN = 1
 TIME = 0.5
 #x,y,theta
 STARTING_POSITION = [0,0,0]
-
+ts = ev3.TouchSensor()
 m = Map()
 c = Controller()
 
@@ -35,4 +36,6 @@ while True:
         else:
             c.stop()
             state = RUNNING_STRAIGHT
+    if ts.value():
+        break
     t.sleep()

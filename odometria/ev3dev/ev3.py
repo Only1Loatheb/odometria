@@ -2,6 +2,8 @@
 class TouchSensor(object): 
     def __init__(self):
         print("TouchSensor constructor")
+    def value(self):
+        return False
 
 class LargeMotor(object): 
     def __init__(self, n):
