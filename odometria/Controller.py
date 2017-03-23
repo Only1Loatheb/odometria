@@ -6,6 +6,8 @@ class Controller():
         self.ts = ev3.TouchSensor()
         self.lm = ev3.LargeMotor('outA')
         self.rm = ev3.LargeMotor('outB')
+        self.lm.reset()
+        self.rm.reset()
         self.prevLmPosition = self.lm.position()
         self.prevRmPosition = self.rm.position()        
     def runStraight(self, d): #d is distance, we can adjust speed to distance later

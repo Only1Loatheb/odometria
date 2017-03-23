@@ -12,7 +12,10 @@ class LargeMotor(object):
         print("LargeMotor constructor on output: ",n)
     def run_forever(self, **args):
         s = args.get("speed_sp")
-        self.pos = self.pos + s/10
+        if not s == 0:
+            self.pos = self.pos + s/abs(s)
         print(self.name, s)
     def position(self):
         return self.pos
+    def reset(self):
+        print("reset")
