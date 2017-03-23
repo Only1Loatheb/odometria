@@ -3,8 +3,8 @@ class Map():
         self.i = 0
         self.turns = [
 	        [0,  0],
-	        [10, 0],
-	        [10, 10]
+	        [100, 0],
+	        [100, 100]
 	        ]
 
     def position(self):

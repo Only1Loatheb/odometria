@@ -8,6 +8,7 @@ class Controller():
         self.rm = ev3.LargeMotor('outB')
         self.lm.reset()
         self.rm.reset()
+        self.cpr = self.lm.count_per_rot
         self.prevLmPosition = self.lm.position()
         self.prevRmPosition = self.rm.position()        
     def runStraight(self, d): #d is distance, we can adjust speed to distance later
@@ -17,10 +18,10 @@ class Controller():
         self.rm.run_forever(speed_sp=0)
         self.lm.run_forever(speed_sp=0)
     def rotate(self,a):
-        if a > 0 :
+        if a < 0 :
             self.rm.run_forever(speed_sp= -self.turnSpeed)
             self.lm.run_forever(speed_sp= self.turnSpeed)
-        if a < 0:
+        if a > 0:
             self.rm.run_forever(speed_sp=self.turnSpeed)
             self.lm.run_forever(speed_sp=-self.turnSpeed)
     def getDeltaPhis(self):
@@ -30,4 +31,4 @@ class Controller():
         deltaRm =  newRmPosition - self.prevRmPosition
         self.prevLmPosition = newLmPosition
         self.prevRmPosition = newRmPosition
-        return [deltaLm, deltaRm]
+        return [deltaLm / self.cpr, deltaRm / self.cpr]

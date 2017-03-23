@@ -19,7 +19,7 @@ class Odometry():
         y = t[1] -  self.position[1]
         sin = y/d
         cos = x/d
-        return atan2(sin,cos) - self.position[2] 
+        return  self.position[2] - atan2(sin,cos) 
     def goodDirection(self, t):
         return abs(self.angle(t)) < self.CLOSE_ANGLE
     def update(self, d):
