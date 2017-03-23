@@ -4,18 +4,19 @@ from Controller import Controller
 from Odometry import Odometry
 from Timer import Timer
 from ev3dev import ev3
+from math import pi
 RUNNING_STRAIGHT = 0
 TAKING_TURN = 1
-WHEEL_RADIUS = 2.7 #TO_DO
+WHEEL_RADIUS = 0.1 #TO_DO
 TRACK_DISTANCE = 15 #TO_DO
 TIME = 0.5
 #x,y,theta
-STARTING_POSITION = [0,0,2]
+STARTING_POSITION = [0,0,pi/2]
 ts = ev3.TouchSensor()
 m = Map()
 c = Controller()
 
-o = Odometry(STARTING_POSITION,WHEEL_RADIUS,TRACK_DISTANCE)	
+o = Odometry(STARTING_POSITION,WHEEL_RADIUS,TRACK_DISTANCE,TIME)
 target = m.position()
 state = 0
 t = Timer(TIME)

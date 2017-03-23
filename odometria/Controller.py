@@ -1,7 +1,7 @@
 import ev3dev.ev3 as ev3
 class Controller():
     def __init__(self):
-        self.speed = 300
+        self.speed = 200
         self.turnSpeed = 100
         self.ts = ev3.TouchSensor()
         self.lm = ev3.LargeMotor('outA')
@@ -26,8 +26,8 @@ class Controller():
     def getDeltaPhis(self):
         newLmPosition = self.lm.position()
         newRmPosition = self.rm.position()
-        deltaLm = self.prevLmPosition - newLmPosition
-        deltaRm = self.prevRmPosition - newRmPosition
+        deltaLm =  newLmPosition - self.prevLmPosition
+        deltaRm =  newRmPosition - self.prevRmPosition
         self.prevLmPosition = newLmPosition
         self.prevRmPosition = newRmPosition
         return [deltaLm, deltaRm]

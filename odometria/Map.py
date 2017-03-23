@@ -4,7 +4,7 @@ class Map():
         self.turns = [
 	        [0,  0],
 	        [10, 0],
-	        [5, 10]
+	        [10, 10]
 	        ]
 
     def position(self):
