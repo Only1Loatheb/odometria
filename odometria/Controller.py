@@ -1,7 +1,8 @@
 import ev3dev.ev3 as ev3
+from math import pi
 class Controller():
     def __init__(self):
-        self.speed = 200
+        self.speed = 400
         self.turnSpeed = 100
         self.ts = ev3.TouchSensor()
         self.lm = ev3.LargeMotor('outA')
@@ -31,4 +32,4 @@ class Controller():
         deltaRm =  newRmPosition - self.prevRmPosition
         self.prevLmPosition = newLmPosition
         self.prevRmPosition = newRmPosition
-        return [deltaLm / self.cpr, deltaRm / self.cpr]
+        return [2 * pi * deltaLm / self.cpr, 2 * pi * deltaRm / self.cpr]
