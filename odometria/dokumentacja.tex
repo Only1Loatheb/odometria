@@ -72,23 +72,37 @@ run_forever(speed_sp), run_timed(time_sp, speed_sp)
 \subsection{Sensor Soniczny}
 Umieściliśmy go z przodu robota. Obracamy nim za pomocą średniego silnika przekazując siłę układem zębatek. Wartość odczytywaliśmy przy pomocy funkcji value(). Interpretujemy ja jako odległość najbliższego przedmiotu w linii prostej od sensora.
 \subsection{Regulator PID}
-Regulator w oparciu o odczyty z czujników światła manipuluje prędkością na silnikach. Jego celem jest utrzymanie wartości wyjściowej układu na z góry zadanym poziomie.  
-Składa się z trzech członów 
+Regulator w oparciu o odczyty z czujników światła manipuluje prędkością na silnikach. Jego celem jest utrzymanie wartości wyjściowej układu na z góry zadanym poziomie. Składa się z trzech członów.
+\begin{lstlisting} 
+def updateError(self):
+	self.lastError = self.error
+	scaledLeft = (lls.value() - 10) * 1.12
+	scaledRight = (rls.value() - 7) * 1.43 
+	self.error = scaledRight - scaledLeft
+\end{lstlisting} 
 \subsubsection{Proporcjonalny}
 Człon który na podstawie sygnału podanego na wejście regulatora wytwarza sygnał sterujący proporcjonalny do sygnału. Wartość wyjściowa jest proporcjonalna do zmiany sygnału.  
 \begin{lstlisting} 
-K * (scaledRight - scaledLeft) 
+self.error
 \end{lstlisting} 
-K = 4 
 \subsubsection{Całkujący}
 Wartość sterowania jest proporcjonalna do sumy uchybu. Człon ten na podstawie poprzednich zmian stara się zmienić sterowanie, by zapobiec przyszłym zmianom. Resetujemy sumę co jakiś czas. 
+\begin{samepage}
 \begin{lstlisting} 
-sum = sum + error
+def integral(self):
+	self.elepsed = self.elepsed + 1
+	if self.elepsed > 5:
+		self.sum = 0
+		self.elepsed = 0  
+	self.sum = self.sum + self.error
+	return self.sum   
 \end{lstlisting}
+\end{samepage}
 \subsubsection{Różniczkujący }
 Reaguje na zmiany uchybu a nie na jego wartość. Przy pomocy tego członu staramy  się osiągnąć stan równowagi w jak najmniejszym czasie, jednakże gdy jego wartość jest zbyt duża możemy doprowadzić układ do niestabilności, zmiany będą tak duże że błąd zamiast się zmniejszać będzie się  stale zwiększać.  
 \begin{lstlisting} 
-error - lastError
+def derivative(self):
+	return self.error - self.lastError
 \end{lstlisting}
 \subsection{Dobór Współczynników }
 Dobór współczynników przy pomocy metody prób i błędów, zazwyczaj zmienialiśmy więcej niż jeden parametr na raz (co nie jest dobrą praktyką)  jego ostateczną postacią było : 
