@@ -58,7 +58,7 @@ Przy konstrukcji wykorzystaliśmy:
 \end{itemize}
 Mieliśmy wykonać zadanie w Pythonie albo c++, wybraliśmy Pythona.  
 Program podzieliśmy na dwa pliki, jeden rozwiązujący dwa pierwsze zadania a drugi zadanie 3. 
-\section{Zadznie 1. Line Follower}
+\section{Zadanie 1. Line Follower}
 Naszym zadaniem było skonstruowanie robota, potrafiącego poruszać się wzdłuż linii. Trasa zbudowana jest z odcinków prostych, łagodnych zakrętów, ostrych zakrętów i skrzyżowań. Robot  jedzie prosto przez skrzyżowania. 
 \subsection{Sensory światła }
 Sensor mierzy natężenie światła odbitego od podłoża.  Na podstawie natężenia światła odbitego, określają jakiego koloru była powierzchnia. (czarny kolor pochłania światło, a biały kolor odbija) Wartość odczytywaliśmy przy pomocy funkcji value(). Trzeba uważać żeby nie ustawić ich za wysoko, bo światło otoczenia miało by zbyt duży wpływ na odczyty. W pokonywaniu  skrzyżowań konieczne było zastosowanie dwóch sensorów światła, żeby odróżnić je od zakrętów.  Zastosowaliśmy skalowanie wartości odczytanych z czujników z powodu ich  niedoskonałości.  Na podstawie odczytów z sensorów wykrywamy gdzie jest linia. 
@@ -91,10 +91,12 @@ Reaguje na zmiany uchybu a nie na jego wartość. Przy pomocy tego członu stara
 error - lastError
 \end{lstlisting}
 \subsection{Dobór Współczynników }
-Dobór współczynników przy pomocy metody prób i błedów, zazwyczaj zmienialiśmy więcej niż jeden parametr na raz (co nie jest dobrą praktyką)  jego ostateczną postacią było :  
+Dobór współczynników przy pomocy metody prób i błędów, zazwyczaj zmienialiśmy więcej niż jeden parametr na raz (co nie jest dobrą praktyką)  jego ostateczną postacią było : 
+\begin{lstlisting}  
 4*self.proportional() + 3*self.derivative() + 0.1*self.integral()  
-Nasz robot bardzo szybko dochodził do stabilności mimo mało znaczącej częsci całkującej  
-Moc na silnikach wyznaczalismy jako 250 +c oraz 250-c na drugim silniku. Ograniczylismy ją do max 1000 , oraz -1000\\
+\end{lstlisting}
+Nasz robot bardzo szybko dochodził do stabilności mimo mało znaczącej części całkującej  
+Moc na silnikach wyznaczaliśmy jako 250 +c oraz 250-c na drugim silniku. Ograniczyliśmy ją do max 1000 , oraz -1000\\
 Początkowo, robot nie radził sobie z zakręcaniem na zakrętach o kącie prostym, zastosowaliśmy zmiany: 
 \begin{itemize}  
 \item Nieznacznym zmniejszeniu jego podstawowej prędkości(z 200 na 150)
@@ -106,23 +108,23 @@ Jednakże potem zwiększyliśmy całe sterowanie, mnożąc je przez 1.7, robot z
 \section{Zadanie 2. Ominięcie sześcianu}
 Zadanie takie samo jak poprzednio, tylko dodatkowo na trasie robota pojawia się sześcian.  
  \\
-Zadznie rozwiązaliśmy następującym algorytmem:\\  
-Sprawdzamy, w każdym obiegu pętli głównej (podczas jazdy wzdłóż lini z zastosowaniem PID) czy w odległości mniejszej niż 8, od sensora znajduje się dowolny obiekt. Jeśli coś się znalazło wtedy: 
+Zadanie rozwiązaliśmy następującym algorytmem:\\  
+Sprawdzamy, w każdym obiegu pętli głównej (podczas jazdy wzdłuż linii z zastosowaniem PID) czy w odległości mniejszej niż 8, od sensora znajduje się dowolny obiekt. Jeśli coś się znalazło wtedy: 
 \begin{enumerate}  
 \item Obracamy sensorem o 90 Stopni w lewo  
 \item Wykonujemy obrót w prawo ( do tyłu żeby nie uderzać w sześcian)  
 \item Jedziemy prosto, aż robot znajdzie się poza sześcianem (sprawdzamy to przy pomocy sensora)  
 \item Wykonujemy obrót w lewo  
-\item Jedziemy chwilke prosto, aż robot znajdzie się koło sześcianu, po czym jedziemy dalej prosto odczytując wartości sensora, aż sensor przestanie dostrzegać sześcian.  
+\item Jedziemy chwile prosto, aż robot znajdzie się koło sześcianu, po czym jedziemy dalej prosto odczytując wartości sensora, aż sensor przestanie dostrzegać sześcian.  
 \item Jedziemy prosto aż robot znajdzie się cały poza sześcianem.  
 \item Wykonujemy obrót w lewo ( o jakieś 90 stopni)  
 \item Jedziemy  Prosto aż znajdziemy linie, po czym wykonujemy obrót w prawo i wracamy do głównej pętli. 
 \end{enumerate}
 Rozwiązanie:  
 \\
- Nasze Rozwiązanie powinno poradzić sobie z szescianami o większych wymiarach, jednakże skręty w prawo i w lewo nie zawsze były idealne i zdarzało nam się uderzać w sześcian 
+Nasze Rozwiązanie powinno poradzić sobie z sześcianami o większych wymiarach, jednakże skręty w prawo i w lewo nie zawsze były idealne i zdarzało nam się uderzać w sześcian 
 \\
-Początkowo  nasz robot czasami nie zdawał sobie sprawy z istnienia szescianu i po prostu w niego uderzał,  był to problem z wykryciem sześcianu, spowodowany użyciem funkcji aproximity, zamiast value.  
+Początkowo  nasz robot czasami nie zdawał sobie sprawy z istnienia sześcianu i po prostu w niego uderzał,  był to problem z wykryciem sześcianu, spowodowany użyciem funkcji aproximity, zamiast value.  
 \section{Zadanie 3. Odometria}
 Naszym zadaniem jest pokonanie trasy wczytanej do pamięci robota, w formie swego rodzaju mapy. Składa się ona ze współrzędnych kolejnych punktów do których musimy dotrzeć. Przy tym zadaniu powinniśmy wykorzystać odometrię. Jednakże zadanie zostało uproszczone tylko do kątów prostych, robot nie musi radzić sobie z pokonywaniem łuków i obrotu o kąt inny niż 90 stopni. 
 \subsection{Błędy stałe}
@@ -131,15 +133,26 @@ Naszym zadaniem jest pokonanie trasy wczytanej do pamięci robota, w formie sweg
 \item Błędy wynikające ze sprzętu (np. wadliwy lewy silnik)
 \item Wynikające np. z braku dokładnych pomiarów
 \end{itemize}
-Z błedami stałymi można sobie poradzić doświadczalnie wyznaczając błedy po czym mnożąc zadane  wartości przez stałą. 
+Z błędami stałymi można sobie poradzić doświadczalnie wyznaczając błędy po czym mnożąc zadane  wartości przez stałą. 
 \subsection{Błędy losowe}
 \begin{itemize}
 \item Nierówna powierzchnia 
 \item Poślizg robota
 \end{itemize}
-Błędy losowe są dużo trudniejsze do zwalczenia, aczkolwiek, jeśli poruszamy się w stałym srodowisku można je skompensować. Podczas laboratorium  wymnożyliśmy pewną stałą przez 1.02, co pozwoliło skompensować poślizg robota.  
+Błędy losowe są dużo trudniejsze do zwalczenia, aczkolwiek, jeśli poruszamy się w stałym środowisku można je skompensować. Podczas laboratorium  wymnożyliśmy pewną stałą przez 1.02, co pozwoliło skompensować poślizg robota.  
 \subsection{Planowany sposób rozwiązania}
-Będziemy liczyć liczbę ticków poszczegółnych silników, na tej podstawie będziemy obliczać w jakim położeniu się znajdujemy. Jeśli znamy swoje położenie i położenie punktu do którego mamy dotrzeć, możemy określić w którą stronę oraz jak długo powinniśmy jechać.  Po dojechaniu do poszczególnych punktów robot sprawdza czy powininen zakręcić , po czym jedzie prosto  do celu.
+Będziemy liczyć liczbę tick'ów poszczególnych silników, na tej podstawie będziemy obliczać w jakim położeniu się znajdujemy. Jeśli znamy swoje położenie i położenie punktu do którego mamy dotrzeć, możemy określić w którą stronę oraz jak długo powinniśmy jechać.  Po dojechaniu do poszczególnych punktów robot sprawdza czy powinien zakręcić , po czym jedzie prosto  do celu.
+\subsection{Implementacja Rozwiązania}
+\subsubsection{Plik Controller.py}
+Definiuje klasę Controller do zarządzania silnikami i odczytu ich parametrów. Umożliwia jazdę na wprost i obrót w zadanym kierunku.
+\subsubsection{Plik Map.py}
+Definiuje klasę Map, która przechowuje trasę dla robota w postaci listy punktów. Pozwala na sekwencyjny dostęp do kolejnych punktów. Po odczytaniu ostatniego następnym zwróconym będzie pierwszy. Wartości współrzędnych zapisane są względem podłoża.
+\subsubsection{Plik Odometry.py}
+Definiuje klasę Odometry. Zajmuje przechowywaniem i aktualizacją położenia robota. Aktualizacja następuje w oparciu o odczyty obrotu kół z silników. Na podstawie posiadanego położenia potrafi określić czy jesteśmy blisko punktu i czy jesteśmy ustawieni w kierunku zbliżania się do niego.
+\subsubsection{Plik Timer.py}
+Definiuje klasę Timer. Odpowiednie wykorzystanie jej funkcji pozwala na obieg pętli głównej w czasie nie krótszy niż zadany. Jej działanie oparte jest o \textit{time.sleep()} i \textit{time.time()}  W ten sposób nie obciążamy nadmiernie procesora.
+\subsubsection{Plik Main.py}
+Zawiera pętle główną programu. Powołuje do życia obiekty klasy Controller, Map, Odometry, Timer, TouchSensor i zarządza ich współpracą.
 \subsection{Wykorzystane wzory}
 \(N_i\) liczba odczytanych impulsów z koła \(i \in l, p\)\\
 \(C_i\) rozdzielczość enkodera - liczba impulsów na jeden obrót koła \(i \in l, p\)
