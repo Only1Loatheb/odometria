@@ -1,0 +1,159 @@
+\documentclass[paper=a4, fontsize=11pt]{scrartcl} % A4 paper and 11pt font size
+%\mathcal{L}
+\usepackage[T1]{fontenc} % Use 8-bit encoding that has 256 glyphs
+\usepackage{fourier} % Use the Adobe Utopia font for the document - comment this line to return to the LaTeX default
+\usepackage{polski} %język polski
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsfonts,amsthm} % Math packages
+\usepackage{listings}
+\lstset{language=Python} 
+
+\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+
+\usepackage{sectsty} % Allows customizing section commands
+\allsectionsfont{\centering \normalfont\scshape} % Make all sections centered, the default font and small caps
+\usepackage{amsmath}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr} % Custom headers and footers
+\pagestyle{fancyplain} % Makes all pages in the document conform to the custom headers and footers
+\fancyhead{} % No page header - if you want one, create it in the same way as the footers below
+\fancyfoot[L]{} % Empty left footer
+\fancyfoot[C]{} % Empty center footer
+\fancyfoot[R]{\thepage} % Page numbering for right footer
+\renewcommand{\headrulewidth}{0pt} % Remove header underlines
+\renewcommand{\footrulewidth}{0pt} % Remove footer underlines
+\setlength{\headheight}{13.6pt} % Customize the height of the header
+
+\numberwithin{equation}{section} % Number equations within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{figure}{section} % Number figures within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+\numberwithin{table}{section} % Number tables within sections (i.e. 1.1, 1.2, 2.1, 2.2 instead of 1, 2, 3, 4)
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs - comment this line for an assignment with lots of text
+
+%----------------------------------------------------------------------------------------
+%	TITLE SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\horrule}[1]{\rule{\linewidth}{#1}} % Create horizontal rule command with 1 argument of height
+
+\title{	
+\normalfont \normalsize 
+\textsc{Politechnika Warszawska} \\ [25pt] % Your university, school and/or department name(s)
+\huge Dokumentacja WR \\ % The assignment title
+}
+\author{Arkadiusz Pawlukiewicz \and Tomasz Zieliński}
+\date{\normalsize\today} 
+
+\begin{document}
+\maketitle 
+
+\section{Konstrukcja robota}
+Przy konstrukcji wykorzystaliśmy:
+\begin{itemize}  
+\item Programowalną kostkę EV3 
+\item Dwa czujniki światła  
+\item Jeden średni silnik  
+\item Dwa duże silniki  
+\item Sensor soniczny 
+\end{itemize}
+Mieliśmy wykonać zadanie w Pythonie albo c++, wybraliśmy Pythona.  
+Program podzieliśmy na dwa pliki, jeden rozwiązujący dwa pierwsze zadania a drugi zadanie 3. 
+\section{Zadznie 1. Line Follower}
+Naszym zadaniem było skonstruowanie robota, potrafiącego poruszać się wzdłuż linii. Trasa zbudowana jest z odcinków prostych, łagodnych zakrętów, ostrych zakrętów i skrzyżowań. Robot  jedzie prosto przez skrzyżowania. 
+\subsection{Sensory światła }
+Sensor mierzy natężenie światła odbitego od podłoża.  Na podstawie natężenia światła odbitego, określają jakiego koloru była powierzchnia. (czarny kolor pochłania światło, a biały kolor odbija) Wartość odczytywaliśmy przy pomocy funkcji value(). Trzeba uważać żeby nie ustawić ich za wysoko, bo światło otoczenia miało by zbyt duży wpływ na odczyty. W pokonywaniu  skrzyżowań konieczne było zastosowanie dwóch sensorów światła, żeby odróżnić je od zakrętów.  Zastosowaliśmy skalowanie wartości odczytanych z czujników z powodu ich  niedoskonałości.  Na podstawie odczytów z sensorów wykrywamy gdzie jest linia. 
+\subsection{Silniki}
+Silniki elektryczne o liniowej charakterystyce. Do ich sterowania używaliśmy głównie dwóch wygodnych funkcji:
+\begin{lstlisting}
+run_forever(speed_sp), run_timed(time_sp, speed_sp)
+\end{lstlisting}
+\textit{run\_forever(speed\_sp)} ustawia prędkość zadaną dla silnika \\
+\textit{run\_timed(time\_sp, speed\_sp)}  ustawia prędkość zadaną dla silnika i zeruje ją po zadanym czasie
+\subsection{Sensor Soniczny}
+Umieściliśmy go z przodu robota. Obracamy nim za pomocą średniego silnika przekazując siłę układem zębatek. Wartość odczytywaliśmy przy pomocy funkcji value(). Interpretujemy ja jako odległość najbliższego przedmiotu w linii prostej od sensora.
+\subsection{Regulator PID}
+Regulator w oparciu o odczyty z czujników światła manipuluje prędkością na silnikach. Jego celem jest utrzymanie wartości wyjściowej układu na z góry zadanym poziomie.  
+Składa się z trzech członów 
+\subsubsection{Proporcjonalny}
+Człon który na podstawie sygnału podanego na wejście regulatora wytwarza sygnał sterujący proporcjonalny do sygnału. Wartość wyjściowa jest proporcjonalna do zmiany sygnału.  
+\begin{lstlisting} 
+K * (scaledRight - scaledLeft) 
+\end{lstlisting} 
+K = 4 
+\subsubsection{Całkujący}
+Wartość sterowania jest proporcjonalna do sumy uchybu. Człon ten na podstawie poprzednich zmian stara się zmienić sterowanie, by zapobiec przyszłym zmianom. Resetujemy sumę co jakiś czas. 
+\begin{lstlisting} 
+sum = sum + error
+\end{lstlisting}
+\subsubsection{Różniczkujący }
+Reaguje na zmiany uchybu a nie na jego wartość. Przy pomocy tego członu staramy  się osiągnąć stan równowagi w jak najmniejszym czasie, jednakże gdy jego wartość jest zbyt duża możemy doprowadzić układ do niestabilności, zmiany będą tak duże że błąd zamiast się zmniejszać będzie się  stale zwiększać.  
+\begin{lstlisting} 
+error - lastError
+\end{lstlisting}
+\subsection{Dobór Współczynników }
+Dobór współczynników przy pomocy metody prób i błedów, zazwyczaj zmienialiśmy więcej niż jeden parametr na raz (co nie jest dobrą praktyką)  jego ostateczną postacią było :  
+4*self.proportional() + 3*self.derivative() + 0.1*self.integral()  
+Nasz robot bardzo szybko dochodził do stabilności mimo mało znaczącej częsci całkującej  
+Moc na silnikach wyznaczalismy jako 250 +c oraz 250-c na drugim silniku. Ograniczylismy ją do max 1000 , oraz -1000\\
+Początkowo, robot nie radził sobie z zakręcaniem na zakrętach o kącie prostym, zastosowaliśmy zmiany: 
+\begin{itemize}  
+\item Nieznacznym zmniejszeniu jego podstawowej prędkości(z 200 na 150)
+\item Zwiększenie rozstawu czujników światła   
+\item Przybliżenie czujników światła bliżej „centrum” robota, początkowo były one zanadto wyciągnięte  
+\end{itemize}
+ Umieściliśmy czujniki  nieco bliżej osi. 
+Jednakże potem zwiększyliśmy całe sterowanie, mnożąc je przez 1.7, robot zaczął radzić sobie na każdym zakręcie z maksymalną prędkością 250 (być może dlatego że baterie 4 mieliśmy z pudełka „puste baterie”) 
+\section{Zadanie 2. Ominięcie sześcianu}
+Zadanie takie samo jak poprzednio, tylko dodatkowo na trasie robota pojawia się sześcian.  
+ \\
+Zadznie rozwiązaliśmy następującym algorytmem:\\  
+Sprawdzamy, w każdym obiegu pętli głównej (podczas jazdy wzdłóż lini z zastosowaniem PID) czy w odległości mniejszej niż 8, od sensora znajduje się dowolny obiekt. Jeśli coś się znalazło wtedy: 
+\begin{enumerate}  
+\item Obracamy sensorem o 90 Stopni w lewo  
+\item Wykonujemy obrót w prawo ( do tyłu żeby nie uderzać w sześcian)  
+\item Jedziemy prosto, aż robot znajdzie się poza sześcianem (sprawdzamy to przy pomocy sensora)  
+\item Wykonujemy obrót w lewo  
+\item Jedziemy chwilke prosto, aż robot znajdzie się koło sześcianu, po czym jedziemy dalej prosto odczytując wartości sensora, aż sensor przestanie dostrzegać sześcian.  
+\item Jedziemy prosto aż robot znajdzie się cały poza sześcianem.  
+\item Wykonujemy obrót w lewo ( o jakieś 90 stopni)  
+\item Jedziemy  Prosto aż znajdziemy linie, po czym wykonujemy obrót w prawo i wracamy do głównej pętli. 
+\end{enumerate}
+Rozwiązanie:  
+\\
+ Nasze Rozwiązanie powinno poradzić sobie z szescianami o większych wymiarach, jednakże skręty w prawo i w lewo nie zawsze były idealne i zdarzało nam się uderzać w sześcian 
+\\
+Początkowo  nasz robot czasami nie zdawał sobie sprawy z istnienia szescianu i po prostu w niego uderzał,  był to problem z wykryciem sześcianu, spowodowany użyciem funkcji aproximity, zamiast value.  
+\section{Zadanie 3. Odometria}
+Naszym zadaniem jest pokonanie trasy wczytanej do pamięci robota, w formie swego rodzaju mapy. Składa się ona ze współrzędnych kolejnych punktów do których musimy dotrzeć. Przy tym zadaniu powinniśmy wykorzystać odometrię. Jednakże zadanie zostało uproszczone tylko do kątów prostych, robot nie musi radzić sobie z pokonywaniem łuków i obrotu o kąt inny niż 90 stopni. 
+\subsection{Błędy stałe}
+\begin{itemize}
+\item Błędy w pomiarach, np. rozstawu kół
+\item Błędy wynikające ze sprzętu (np. wadliwy lewy silnik)
+\item Wynikające np. z braku dokładnych pomiarów
+\end{itemize}
+Z błedami stałymi można sobie poradzić doświadczalnie wyznaczając błedy po czym mnożąc zadane  wartości przez stałą. 
+\subsection{Błędy losowe}
+\begin{itemize}
+\item Nierówna powierzchnia 
+\item Poślizg robota
+\end{itemize}
+Błędy losowe są dużo trudniejsze do zwalczenia, aczkolwiek, jeśli poruszamy się w stałym srodowisku można je skompensować. Podczas laboratorium  wymnożyliśmy pewną stałą przez 1.02, co pozwoliło skompensować poślizg robota.  
+\subsection{Planowany sposób rozwiązania}
+Będziemy liczyć liczbę ticków poszczegółnych silników, na tej podstawie będziemy obliczać w jakim położeniu się znajdujemy. Jeśli znamy swoje położenie i położenie punktu do którego mamy dotrzeć, możemy określić w którą stronę oraz jak długo powinniśmy jechać.  Po dojechaniu do poszczególnych punktów robot sprawdza czy powininen zakręcić , po czym jedzie prosto  do celu.
+\subsection{Wykorzystane wzory}
+\(N_i\) liczba odczytanych impulsów z koła \(i \in l, p\)\\
+\(C_i\) rozdzielczość enkodera - liczba impulsów na jeden obrót koła \(i \in l, p\)
+\[
+\Delta \varphi_i = \frac{2\pi N_i}{C_i}, i \in l, p
+\]\[
+\Delta p = \frac{r}{2} \left( \Delta \varphi_l + \Delta \varphi_r \right)
+\]\[
+\Delta \theta = \frac{r}{d} \left( \Delta \varphi_l - \Delta \varphi_r \right)
+\]\[
+\theta_{k+1} = \theta_k + \Delta \theta
+\]\[
+x_{k+1} = x_k + \Delta p cos\left( \theta + \frac{\Delta \theta}{2} \right)
+\]\[
+y_{k+1} = y_k + \Delta p sin\left( \theta + \frac{\Delta \theta}{2} \right)
+\] 
+\end{document}

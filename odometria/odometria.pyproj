@@ -45,6 +45,11 @@
   <ItemGroup>
     <Folder Include="ev3dev\" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="dokumentacja.tex">
+      <Publish>True</Publish>
+    </Content>
+  </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
     <PtvsTargetsFile>$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets</PtvsTargetsFile>
