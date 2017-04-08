@@ -16,12 +16,21 @@ class Odometry():
         y = t[1] -  self.position[1]
         sin = y/d
         cos = x/d
-        return  self.position[2] - atan2(sin,cos) 
+        angleDif =  self.position[2] - atan2(sin,cos)
+        if angleDif > pi:
+                angleDif = angleDif - 2*pi
+        elif angleDif < -pi:
+                angleDif = angleDif + 2*pi
+        return angleDif 
     def goodDirection(self, t, a):
         return abs(self.angle(t)) < a
     def update(self, d):
-        dTheta = self.wheel_r * (d[0] - d[1]) / self.track_d 
+        dTheta = self.wheel_r * (- d[0] + d[1]) / self.track_d 
         self.position[0] = self.position[0] + self.wheel_r * (d[0] + d[1]) * cos(self.position[2] + dTheta / 2) / 2 
         self.position[1] = self.position[1] + self.wheel_r * (d[0] + d[1]) * sin(self.position[2] + dTheta / 2) / 2
-        self.position[2] = self.position[2] + dTheta
+        self.position[2] = (self.position[2] + dTheta)
+        if self.position[2] > pi:
+        	self.position[2] = self.position[2] - 2*pi
+        elif self.position[2] < -pi:
+        	self.position[2] = self.position[2] + 2*pi   
        

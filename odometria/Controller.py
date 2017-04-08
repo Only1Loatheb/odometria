@@ -10,8 +10,8 @@ class Controller():
         self.lm.reset()
         self.rm.reset()
         self.cpr = self.lm.count_per_rot
-        self.prevLmPosition = self.lm.position()
-        self.prevRmPosition = self.rm.position()        
+        self.prevLmPosition = self.lm.position
+        self.prevRmPosition = self.rm.position        
     def runStraight(self, d): #d is distance, we can adjust speed to distance later
         self.rm.run_forever(speed_sp=self.speed)
         self.lm.run_forever(speed_sp=self.speed)
@@ -19,15 +19,15 @@ class Controller():
         self.rm.run_forever(speed_sp=0)
         self.lm.run_forever(speed_sp=0)
     def rotate(self,a):
-        if a < 0 :
+        if a > 0 :
             self.rm.run_forever(speed_sp= -self.turnSpeed)
             self.lm.run_forever(speed_sp= self.turnSpeed)
-        if a > 0:
+        else:
             self.rm.run_forever(speed_sp=self.turnSpeed)
             self.lm.run_forever(speed_sp=-self.turnSpeed)
     def getDeltaPhis(self):
-        newLmPosition = self.lm.position()
-        newRmPosition = self.rm.position()
+        newLmPosition = self.lm.position
+        newRmPosition = self.rm.position
         deltaLm =  newLmPosition - self.prevLmPosition
         deltaRm =  newRmPosition - self.prevRmPosition
         self.prevLmPosition = newLmPosition
